@@ -1,13 +1,21 @@
-FROM node:latest
+FROM node:18-alpine AS builder
 
-WORKDIR usr/src/app
+  WORKDIR /app
 
-COPY package.json ./
+  COPY package*.json ./
+  RUN npm install --silent
 
-RUN npm install
+  COPY . .
 
-COPY . .
+  FROM node:18-alpine
 
-EXPOSE 5173
+  WORKDIR /app
 
-CMD ["npm" ,"run" ,"dev"]
+  COPY package*.json ./
+  RUN npm install --silent
+
+  COPY . .
+
+  EXPOSE 3000 
+
+  CMD [ "npm", "run", "dev" ]  
